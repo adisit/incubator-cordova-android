@@ -123,6 +123,15 @@ public class CordovaWebViewClient extends WebViewClient {
             }
         }
 
+     // If displaying map (app://{"method":"xx","parameters":{"url":"http://xx.xx","title":"xx"},"callback":""}
+        else if (url.startsWith("app:")) {
+            try {
+            	LOG.i(TAG, "app :  " + url );
+            } catch (android.content.ActivityNotFoundException e) {
+                LOG.e(TAG, "Error showing map " + url + ": " + e.toString());
+            }
+        }
+        
         // If sending email (mailto:abc@corp.com)
         else if (url.startsWith(WebView.SCHEME_MAILTO)) {
             try {
