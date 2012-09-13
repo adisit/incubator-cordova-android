@@ -23,7 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 
 /**
- * The Cordova activity abstract class that is extended by DroidGap.
+ * The Cordova activity abstract class that is extended by TLWebActivity.
  * It is used to isolate plugin development, and remove dependency on entire Cordova library.
  */
 public interface CordovaInterface {

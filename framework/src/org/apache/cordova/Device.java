@@ -120,7 +120,7 @@ public class Device extends Plugin {
     /**
      * Listen for telephony events: RINGING, OFFHOOK and IDLE
      * Send these events to all plugins using
-     *      DroidGap.onMessage("telephone", "ringing" | "offhook" | "idle")
+     *      TLWebActivity.onMessage("telephone", "ringing" | "offhook" | "idle")
      */
     private void initTelephonyReceiver() {
         IntentFilter intentFilter = new IntentFilter();

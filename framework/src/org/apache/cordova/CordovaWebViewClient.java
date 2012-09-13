@@ -18,38 +18,36 @@
 */
 package org.apache.cordova;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import org.apache.cordova.api.CordovaInterface;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.cordova.api.LOG;
+import org.apache.cordova.json.UtilJSONParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
+import android.util.Log;
 import android.view.View;
 import android.webkit.HttpAuthHandler;
 import android.webkit.SslErrorHandler;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 /**
  * This class is the WebViewClient that implements callbacks for our web view.
  */
 public class CordovaWebViewClient extends WebViewClient {
 
-    private static final String TAG = "Cordova";
+    private static final String TAG = "MyWebViewClient";
     CordovaInterface cordova;
     CordovaWebView appView;
     private boolean doClearHistory = false;
@@ -97,6 +95,9 @@ public class CordovaWebViewClient extends WebViewClient {
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
+    	LOG.w(TAG + ".URL", "URL : " + url);
+    	Log.w(TAG, "shouldOverrideUrlLoading URL : " + url);
+    	
         // First give any plugins the chance to handle the url themselves
         if ((this.appView.pluginManager != null) && this.appView.pluginManager.onOverrideUrlLoading(url)) {
         }
@@ -127,8 +128,33 @@ public class CordovaWebViewClient extends WebViewClient {
         else if (url.startsWith("app:")) {
             try {
             	LOG.i(TAG, "app :  " + url );
+            	Toast.makeText(this.cordova.getActivity() , "app:// Protocol", Toast.LENGTH_SHORT).show();
+            	try {
+            		
+            		url = url.substring("app://".length(), url.length());
+            		
+					UtilJSONParser json = new UtilJSONParser(url);
+					
+					final HashMap<String, Object> data = (HashMap<String, Object>) json.parserLevelDData();
+					
+					if(String.valueOf(data.get("method")).trim().equalsIgnoreCase("vdoplayer")){
+						HashMap<String, Object> params = (HashMap<String, Object>) data.get("parameters");	
+						
+						this.cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(String.valueOf(params.get("url")))));
+					}else{
+						Toast.makeText(this.cordova.getActivity() , url, Toast.LENGTH_SHORT).show();
+						
+						
+					}
+					
+					
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+            	
             } catch (android.content.ActivityNotFoundException e) {
-                LOG.e(TAG, "Error showing map " + url + ": " + e.toString());
+                LOG.e(TAG, "Error " + url + ": " + e.toString());
             }
         }
         
@@ -190,10 +216,14 @@ public class CordovaWebViewClient extends WebViewClient {
 
             // If not our application, let default viewer handle
             else {
+            	
+            	LOG.e(TAG, "Other Protocol : " + url);
+            	
                 try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                    intent.setData(Uri.parse(url));
-                    this.cordova.getActivity().startActivity(intent);
+//                    Intent intent = new Intent(Intent.ACTION_VIEW);
+//                    intent.setData(Uri.parse(url));
+//                    this.cordova.getActivity().startActivity(intent);
+                	this.appView.loadUrl(url);
                 } catch (android.content.ActivityNotFoundException e) {
                     LOG.e(TAG, "Error loading url " + url, e);
                 }
@@ -234,6 +264,8 @@ public class CordovaWebViewClient extends WebViewClient {
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         // Clear history so history.back() doesn't do anything.
         // So we can reinit() native side CallbackServer & PluginManager.
+    	LOG.w(TAG, "onPageStarted(" + url + ")");
+    	
         if (!this.appView.useBrowserHistory) {
             view.clearHistory();
             this.doClearHistory = true;
@@ -263,7 +295,7 @@ public class CordovaWebViewClient extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
-        LOG.d(TAG, "onPageFinished(" + url + ")");
+        LOG.w(TAG, "onPageFinished(" + url + ")");
 
         /**
          * Because of a timing issue we need to clear this history in onPageFinished as well as

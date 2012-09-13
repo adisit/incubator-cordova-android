@@ -37,6 +37,7 @@ import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.GeolocationPermissions.Callback;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * This class is the WebChromeClient that implements callbacks for our web view.
@@ -87,6 +88,9 @@ public class CordovaChromeClient extends WebChromeClient {
      */
     @Override
     public boolean onJsAlert(WebView view, String url, String message, final JsResult result) {
+    	
+    	LOG.w(TAG + ".URL", "onJsAlert URL : " + url);
+    	
         AlertDialog.Builder dlg = new AlertDialog.Builder(this.cordova.getActivity());
         dlg.setMessage(message);
         dlg.setTitle("Alert");
@@ -131,6 +135,8 @@ public class CordovaChromeClient extends WebChromeClient {
      */
     @Override
     public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
+    	LOG.w(TAG + ".URL", "onJsConfirm URL : " + url);
+    	
         AlertDialog.Builder dlg = new AlertDialog.Builder(this.cordova.getActivity());
         dlg.setMessage(message);
         dlg.setTitle("Confirm");
@@ -187,6 +193,8 @@ public class CordovaChromeClient extends WebChromeClient {
     @Override
     public boolean onJsPrompt(WebView view, String url, String message, String defaultValue, JsPromptResult result) {
 
+    	LOG.w(TAG + ".URL", "onJsPrompt URL : " + url);
+    	
         // Security check to make sure any requests are coming from the page initially
         // loaded in webview and not another loaded in an iframe.
         boolean reqOk = false;
@@ -262,6 +270,7 @@ public class CordovaChromeClient extends WebChromeClient {
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             res.cancel();
+                            
                         }
                     });
             dlg.create();
@@ -281,10 +290,12 @@ public class CordovaChromeClient extends WebChromeClient {
      * @param quotaUpdater
      */
     @Override
-    public void onExceededDatabaseQuota(String url, String databaseIdentifier, long currentQuota, long estimatedSize,
-            long totalUsedQuota, WebStorage.QuotaUpdater quotaUpdater)
+    public void onExceededDatabaseQuota(String url, String databaseIdentifier, long currentQuota, long estimatedSize, long totalUsedQuota, WebStorage.QuotaUpdater quotaUpdater)
     {
-        LOG.d(TAG, "DroidGap:  onExceededDatabaseQuota estimatedSize: %d  currentQuota: %d  totalUsedQuota: %d", estimatedSize, currentQuota, totalUsedQuota);
+    	
+    	
+    	
+        LOG.d(TAG, "TLWebActivity:  onExceededDatabaseQuota estimatedSize: %d  currentQuota: %d  totalUsedQuota: %d", estimatedSize, currentQuota, totalUsedQuota);
 
         if (estimatedSize < MAX_QUOTA)
         {
@@ -306,7 +317,30 @@ public class CordovaChromeClient extends WebChromeClient {
     @Override
     public void onConsoleMessage(String message, int lineNumber, String sourceID)
     {
+    	
+//    	final JsPromptResult res = null;
+//    	
+    	CharSequence defaultValue = String.format("%s: Line %d : %s", sourceID, lineNumber, message);
+//    	
+    	
+    	
+    	if(sourceID != null && sourceID.length() > 0 && !sourceID.equalsIgnoreCase("undefined")){
+	    	AlertDialog.Builder dlg = new AlertDialog.Builder(this.cordova.getActivity());
+	        dlg.setMessage("ConsoleMessage");
+	        final EditText input = new EditText(this.cordova.getActivity());
+	        
+			input.setText(defaultValue);
+	        dlg.setView(input);
+	        dlg.setCancelable(false);
+	        dlg.setPositiveButton("OK", null);
+	        dlg.create().show();
+	        
+    	}
+    	
+//    		Toast.makeText(this.cordova.getActivity(), defaultValue, Toast.LENGTH_SHORT).show();
+        
         LOG.d(TAG, "%s: Line %d : %s", sourceID, lineNumber, message);
+        
         super.onConsoleMessage(message, lineNumber, sourceID);
     }
 

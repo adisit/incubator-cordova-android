@@ -344,6 +344,8 @@ public class CordovaWebView extends WebView {
      */
     @Override
     public void loadUrl(String url) {
+    	
+    	
         if (url.equals("about:blank") || url.startsWith("javascript:")) {
             this.loadUrlNow(url);
         }
@@ -478,7 +480,7 @@ public class CordovaWebView extends WebView {
         // If first page, then show splashscreen
         else {
 
-            LOG.d(TAG, "DroidGap.loadUrl(%s, %d)", url, time);
+            LOG.d(TAG, "TLWebActivity.loadUrl(%s, %d)", url, time);
 
             // Send message to show splashscreen now if desired
             this.postMessage("splashscreen", "show");
@@ -580,10 +582,10 @@ public class CordovaWebView extends WebView {
      * @param url           The url to load.
      * @param openExternal  Load url in browser instead of Cordova webview.
      * @param clearHistory  Clear the history stack, so new page becomes top of history
-     * @param params        DroidGap parameters for new app
+     * @param params        TLWebActivity parameters for new app
      */
     public void showWebPage(String url, boolean openExternal, boolean clearHistory, HashMap<String, Object> params) {
-        LOG.d(TAG, "showWebPage(%s, %b, %b, HashMap", url, openExternal, clearHistory);
+        LOG.w(TAG, "showWebPage(%s, %b, %b, HashMap", url, openExternal, clearHistory);
 
         // If clearing history
         if (clearHistory) {
@@ -632,7 +634,7 @@ public class CordovaWebView extends WebView {
 
     /**
      * Load Cordova configuration from res/xml/cordova.xml.
-     * Approved list of URLs that can be loaded into DroidGap
+     * Approved list of URLs that can be loaded into TLWebActivity
      *      <access origin="http://server regexp" subdomains="true" />
      * Log level: ERROR, WARN, INFO, DEBUG, VERBOSE (default=ERROR)
      *      <log level="DEBUG" />

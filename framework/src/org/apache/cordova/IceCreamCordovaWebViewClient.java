@@ -24,11 +24,13 @@ import java.io.InputStream;
 import org.apache.cordova.api.CordovaInterface;
 import org.apache.cordova.api.LOG;
 
+import android.annotation.TargetApi;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 
+@TargetApi(11)
 public class IceCreamCordovaWebViewClient extends CordovaWebViewClient {
 
 

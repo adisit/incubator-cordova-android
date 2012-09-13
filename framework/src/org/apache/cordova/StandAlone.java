@@ -20,7 +20,7 @@ package org.apache.cordova;
 
 import android.os.Bundle;
 
-public class StandAlone extends DroidGap {
+public class StandAlone extends TLWebActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

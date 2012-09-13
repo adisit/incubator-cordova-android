@@ -21,7 +21,7 @@ package com.phonegap.api;
 import android.app.Activity;
 
 /**
- * The Cordova activity abstract class that is extended by DroidGap.
+ * The Cordova activity abstract class that is extended by TLWebActivity.
  * It is used to isolate plugin development, and remove dependency on entire Cordova library.
  */
 public abstract class PhonegapActivity extends Activity implements org.apache.cordova.api.CordovaInterface {
